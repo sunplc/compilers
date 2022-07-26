@@ -35,12 +35,6 @@ static token_t* token_new(const char *text, enum token_type type)
     return new;
 }
 
-static void token_add(token_t *tail, const char *text, enum token_type type)
-{
-    token_t *new = token_new(text, type);
-    tail->next = new;
-}
-
 void tokens_dump(token_t *head)
 {
     printf("text:\t\ttype:\n");
@@ -52,7 +46,7 @@ void tokens_dump(token_t *head)
 }
 
 /* append character to token's text, check string boundry */
-void append_char(char *text, char c)
+static void append_char(char *text, char c)
 {
     size_t token_text_len = strlen(text);
 
@@ -71,17 +65,14 @@ int get_next_char = 1;
 /* deterministic finite automation's state */
 enum dfa_state state = state_initial;
 
-void save_token(token_t *new)
+static void save_token(token_t *new)
 {
     get_next_char = 0;
     state = state_initial;
 
     if (strlen(new->text)) {
         /* create an new token */
-        token_t *tmp = malloc(sizeof(token_t));
-
-        tmp->type = new->type;
-        strcpy(tmp->text, new->text);
+        token_t *tmp = token_new(new->text, new->type);
 
         if (head == NULL) {
             head = tmp;
@@ -101,9 +92,11 @@ void save_token(token_t *new)
 
 token_t *tokenize(char *script) {
     head = NULL;
+    get_next_char = 1;
+    char c;
+
     char *cursor = script;
     token_t *t = token_new("", state);
-    char c;
 
     while (1) {
         if (get_next_char) {
@@ -112,10 +105,10 @@ token_t *tokenize(char *script) {
                 save_token(t);
                 break;
             }
+            /* printf(">>> char: %c\t(integer %d)\n", c, c); */
         }
         get_next_char = 1;
 
-        /* printf(">>> Char: %d %c\n", c, c); */
 
         switch(state) {
         case state_initial:
@@ -163,6 +156,12 @@ token_t *tokenize(char *script) {
                 state = state_id;
                 t->type = id;
                 append_char(t->text, c);
+            } else if (isspace(c)) {
+
+            } else {
+                fprintf(stderr, "lexical analysis error, "
+                        "invalid character: '%c' (integer %d)\n", c, c);
+                exit(1);
             }
 
             break;

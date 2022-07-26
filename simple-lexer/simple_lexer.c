@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     token_t *head = tokenize(script);
     tokens_dump(head);
 
-    script = "int age >= 45;";
+    script = "2 + 3 * 5";
 
     printf("\nparse : %s\n", script);
     head = tokenize(script);
