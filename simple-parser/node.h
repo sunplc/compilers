@@ -9,5 +9,6 @@ typedef struct node {
 } node_t;
 
 void match_additive_expr(token_t *head);
+void match_int_declare(token_t *head);
 
 #endif /* _NODE_H_INCLUDED_ */
