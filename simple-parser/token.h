@@ -14,7 +14,7 @@ enum token_type {
     id,
 
     plus,
-    minux,
+    minus,
     star,
     slash,
     assignment,

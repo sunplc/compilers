@@ -163,7 +163,7 @@ token_t *tokenize(char *script) {
                 append_char(t->text, c);
             } else if (c == '-') {
                 state = state_minus;
-                t->type = minux;
+                t->type = minus;
                 append_char(t->text, c);
             } else if (c == '*') {
                 state = state_star;
